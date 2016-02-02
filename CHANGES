@@ -1,0 +1,177 @@
+==== CHANGES ====
+
+== Version 0.1 (initial version) ==
+
+== Version 0.2 (13/01/2011) ==
+ - Add the following functions to the list handled by the library: sqrt, ceil, floor, toDregres, toRadians, format
+ - Handle string constants in expressions
+ - Handle the PI constant
+ - Handle string concatenation
+
+== Version 0.3 (16/01/2011) ==
+ - Add the pow function
+ - Simplify parsing result for equations that are only Constants or Variables. Return the Variable or the Constant as an Equation
+
+== Version 0.3.1 (16/01/2011) ==
+ - Adds several characters to the CHARACTERS token
+
+== Version 0.3.2 (18/01/2011) ==
+ - Add a way to define Variables types. Variables which types are defined and not dynamic have a default value
+
+== Version 0.3.3 (18/01/2011) ==
+ - Fix a bug when resetting FunctionsDefinitions
+
+== Version 0.3.4 (19/01/2011) ==
+ - Add new INTEGER and FLOAT Variable types. The NUMBER and DYNAMIC types still exist.
+ - Change the package for fundamental Objects definitions. The expr package is now only for expressions
+ - Add the concept of global constants
+
+== Version 0.4 (20/01/2011) ==
+ - Allow polymorphism for functions
+ - Fix some license header errors
+ - Allow to use a function result as a parameter of another function
+ - Make sure that SIN, COS, TAN, etc... results are computed as float values
+
+== Version 0.5 Beta 1 (29/01/2011) ==
+ - Fix bad declaration of return type for some numeric expressions
+ - Add array type for expressions, variables, and constants, as well as the ability to get an index of the array
+
+== Version 0.5 (30/01/2011) ==
+ - Add some new constructors and methods to Constants and Variables to add for more user customization
+
+== Version 0.5.1 (07/02/2011) ==
+ - Add the true and false constants
+ - Make sure that Variables instances are not removed when parsing expressions, if these Variables are already existing
+ - Allow to give a name to Constants
+ - The boolean result type for functions was not handled
+
+== Version 0.6 Beta 1 (02/03/2011) ==
+ - Move the UnaryExpression and AryExpressions in the model package
+ - Add an utility class which allows to export an Expression as a String
+ - Add a utility class which allows to replace a Variable by an Expression in an Expression
+ - Add a utility class which allows to simplify an Expression
+ - Allow to parse SUB and ADD AryExpressions expressions without first argument, like for example "-a" or "+2"
+
+== Version 0.6 Beta 2 (14/03/2011) ==
+ - Vararg functions are now handled
+
+== Version 0.6 Beta 3 (04/03/2011) ==
+ - Add the ability to choose when exporting an expression if the named constants must be exported as their values or with their
+   names
+ - Keep the names of constants defined explicitely in the global constants
+
+== Version 0.6 (24/05/2011) ==
+ - Fix some cases where the export of an ary expression under an unary operator did not enclose the
+   expression under parenthesis
+
+== Version 0.7 (15/09/2011) ==
+ - It is now possible to use any expression in functions, (even custom functions). For example "function(a+1)" or
+   "function2(a, c - function3(a, b * sin(a)))" are allowed
+
+== Version 0.7.1 (05/11/2011) ==
+ - Add a performance test to the previous version to allow to compare with the 0.8 version with improved performance
+
+== Version 0.8 Beta 1 (19/09/2011) ==
+ - Beta version for the performance branch. Performance boost is approx 50% to 100% compared to 0.7
+
+== Version 0.8 Beta 2 (05/11/2011) ==
+ - Add utility methods in the util package to detect if an Expression is a Constant or a Variable
+ - Add new simplification patterns: Now if two constants are combined in a numeric expression, the resulting Constant result
+   is returned rather than the expression
+
+== Version 0.8 Beta 3 (13/02/2012) ==
+ - Fix exporting expressions with associative operations with enclosed parenthesis; For example, the export of 1 + 2 + 3 is
+   1 + 2 + 3 (which is expected) and not (1 + 2) + 3 (which was correct but uselessly complex)
+ - Fix the jar building keeping some html files
+
+== Version 0.8 (18/02/2012) ==
+ - Avoid a StackTrace exception in the combiner if the sub expression is equal to the expression to combine
+
+== Version 0.8.1 (19/02/2012) ==
+ - Ensure that the Variable.getValue() method will never throw a NullPointerException, even if the Variable has no value yet
+
+== Version 0.8.2 (28/02/2012) ==
+ - Add several new methods in the ExpressionCombiner to allow to add, substract, multiply, or divide two expressions easily
+ - Fix a bug which could appear in some cases in the ExpressionExporter
+
+== Version 0.8.3 (29/02/2012) ==
+ - Simplify internally expressions obtained through add, substract, multiply, or divide methods in the ExpressionCombiner
+ - Fix a bug whereas value types would be mistakingly defined as DYNAMIC for constants
+ - Fix wrong export of expressions like -e or +e (ADD or SUB without first expression)
+ - Change "substract" as "subtract"
+
+== Version 0.8.4 (03/03/2012) ==
+ - Fix expressions like a*(-2) which were not parsed correctly
+ - Improve result for ExpressionExporter with expressions like +a, which are now exported as "a" rather than "+a"
+ - Improve result for ExpressionExporter with expressions like a*(b), which are now exported as "a * b" rather than "a * (b)"
+
+== Version 0.8.5 (04/03/2012) ==
+ - Add the atn2 mathematical expression
+ - Improve result for ExpressionExporter with expressions like a + (-b) case, which are now exported as a - b
+
+== Version 0.8.6 (05/03/2012) ==
+ - Add the modulo function (a % b) and the abs function
+ - Make sure that only ParserExceptions are thrown by the parser (other Exceptions that may be thrown are encapsulated)
+ - Fix indexes of arrays which could not be parsed if they were the result of expressions (such as TAB[a+1])
+
+== Version 0.8.7 (08/03/2012) ==
+ - Fix adding mixed strings and numeric expressions which return strings concatenation (for example "a" + 1 return "a1")
+ - Fix combination of functions in ary expressions which returned the wrong value or did not parse correctly. For example, now
+   c + function(a, b) now parse and evaluate correctly
+
+== Version 0.8.8 (09/03/2012) ==
+ - Add the XOR function (a ^ b)
+ - Fix the AND, OR, NEQ, and EQ functions which results were wrong in some cases
+
+== Version 0.9 Beta 1 (11/03/2012) ==
+ - Add blocks of expressions separated by semicolons. For example the following expression is parsed correctly:
+   "c=a+cos(b); return c"
+ - Add local variables in blocks. For example the following expression is parsed correctly: "int c=a+cos(b); return c", and in this case
+   the expression export only 2 global variables, a and b (c is local)
+ - Add if-then-else expressions
+ - Skip EOL tokens in the expression parsing
+
+== Version 0.9 Beta 2 (11/03/2012) ==
+ - Fix local variables not being available in a block if they where defined in a super block. Previously a global variable with
+   the same name was created or used, now the local variable is correctly used
+ - Fix some expressions in blocks not being parsed in some cases
+ - Add while expressions
+
+== Version 0.9 Beta 3 (13/03/2012) ==
+ - Add increment operator (++)
+ - Fix else expression code blocks not being able to have more than one line
+ - Fix some cases when unwinding of curly brackets was not performed well and could lead to false results for some expressions
+ - Fix some cases when the parser could parse incorrectly expressions containing both while and choice expressions
+ - Fix wrong parsing for choice expressions without else and else if
+
+== Version 0.9 (18/03/2012) ==
+ - Add decrement operator (--)
+ - Add the assignments operators (+=, -=, */, /=)
+ - Fix several bugs in expressions combiner, including Array expressions
+ - Fix constant of type String exported without enclosing double-quotes
+ - Make the parser much more lenient on the use of semicolons or not to separate expressions. The parser accept more
+   than one semicolon to separate expressions, and it accept semicolons before the end of a block separated by an
+   open bracket. For example "int a = 2;;; if (a == 2) {return a;;;} else {return 10;;}" is accepted
+ - Add new combiners which allow to add / subtract, multiply or divide directly with a value
+ - Allow to give names to constants
+ - Fix a regression on the division expression which resulted on the result of the expression being 0 in most cases
+
+== Version 0.9.1 (22/03/2012) ==
+ - Add the sign function
+ - Add the echo function
+ - Add several characters to the list of characters allowed in expressions: =, <, >
+ - Add comments
+
+== Version 0.9.2 (02/04/2012) ==
+ - Allow semicolons inside function declaration
+ - Fix expressions before semicolons followed by function expressions not being taken into account in some cases
+ - Add the array declaration and array affectation expressions
+ - Make the expressions cloneable
+ - Add a new combiner method allowing to easily create an array expression
+
+== Version 0.10 (in progress) ==
+ - Don't evaluate the right part of the expression in the OR and AND expressions if the first part already set
+   the result (for example for "true || b" evaluating b is not needed)
+ - Don't evaluate the right part of the expression in the MULT expressions if the first part is already 0, when
+   the evaluation use int numbers
+ - Support the "break" construct in while loops

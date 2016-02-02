@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+<project name="ExpressionJ" default="default" basedir=".">
+    <description>Builds, tests, and runs the project ExpressionJ.</description>
+    <import file="nbproject/build-impl.xml"/>
+
+    <target name="-post-init" depends="-init-project" >
+    <!-- general properties definition -->
+        <property name="archiveName" value="expressionJ"/>
+        <property name="tools.dir" value="tools" />
+        <property name="javacc.build" value="${src.dir}/org/da/expressionj/expr/parser"/>
+        <property name="javacc.home" value="${tools.dir}"/>
+        <condition property="javadoc.exists">
+           <available file="${dist.javadoc.dir}" type="dir"/>
+        </condition>
+    </target>
+  <!-- =================================================================== -->
+  <!-- Non NB targets                                                          -->
+  <!-- =================================================================== -->
+
+    <target description="fetch version" depends="-init-project" name="version">
+        <loadproperties srcFile="${src.dir}/org/da/expressionj/resources/expressionj.properties">
+            <filterchain>
+                <linecontains>
+                  <contains value="version"/>
+                </linecontains>
+            </filterchain>
+        </loadproperties>
+   </target>
+
+  <!-- =================================================================== -->
+  <!-- zip files                                                          -->
+  <!-- =================================================================== -->
+
+    <!-- zip javadocs -->
+    <target depends="version, -post-init"
+        description="create javadoc zip files" name="zipjavadoc" if="javadoc.exists">
+        <zip compress="true" defaultexcludes="true" zipfile="${dist.dir}/${archiveName}-docs-${version}.zip">
+            <fileset description="documentation" dir="${dist.javadoc.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </zip>
+    </target>
+
+    <target depends="version, -post-init, zipjavadoc" description="create zip files" name="zip">
+  <!-- zip source files distribution -->
+        <zip compress="true" defaultexcludes="yes" zipfile="${dist.dir}/${archiveName}-src-${version}.zip">
+            <fileset description="core source directory" dir="${src.dir}/..">
+                <include name="src/**/*.java"/>
+                <include name="src/**/*.html"/>
+                <include name="src/**/*.properties"/>
+                <include name="src/**/*.jj"/>
+                <include name="nbproject/**/*.*"/>
+            </fileset>
+            <fileset description="binaries" dir="${dist.dir}">
+                <include name="expressionJ.jar"/>
+            </fileset>
+            <fileset description="tools" dir="${dist.dir}/..">
+                <include name="tools/*.jar"/>
+            </fileset>
+            <fileset description="misc" dir=".">
+                <include name="LICENSE.txt"/>
+                <include name="CHANGES"/>
+                <include name="src/manifest.mf"/>
+                <include name="build.xml"/>
+            </fileset>
+        </zip>
+  <!-- zip binary files -->
+        <zip compress="true" defaultexcludes="yes"
+             zipfile="${dist.dir}/${archiveName}-bin-${version}.zip">
+            <fileset description="docs" dir=".">
+                <include name="LICENSE.txt"/>
+                <include name="CHANGES"/>
+            </fileset>
+            <fileset description="binaries" dir="${dist.dir}">
+                <include name="expressionJ.jar"/>
+            </fileset>
+        </zip>        
+  <!-- zip tests -->
+        <zip compress="true" defaultexcludes="true" zipfile="${dist.dir}/${archiveName}-tests-${version}.zip">
+            <fileset description="tests directory" dir="${src.dir}/..">
+                <include name="test/**/*.*"/>
+            </fileset>
+        </zip>
+    </target>
+
+  <!-- =================================================================== -->
+  <!-- javaCC                                                      -->
+  <!-- =================================================================== -->
+
+    <target name="javaCC" depends="-post-init" >
+        <delete>
+            <fileset dir="${javacc.build}" includes="*.java"/>
+        </delete>
+        <java classname="javacc" classpath="${javacc.home}/javacc.jar" dir="${javacc.build}/.." failonerror="true" fork="true">
+            <arg line="-OUTPUT_DIRECTORY=parser"/>
+            <arg file="${src.dir}/org/da/expressionj/expr/equation.jj"/>
+        </java>
+    </target>
+
+  <!-- =================================================================== -->
+  <!-- NB overwrite targets : jar                                     -->
+  <!-- =================================================================== -->
+
+    <target depends="init,compile,-pre-jar,-do-jar-without-manifest,-post-jar" description="Build JAR." name="jar"/>  
+
+    <target name="-do-jar-without-manifest" depends="init,compile,-pre-pre-jar,-pre-jar" >
+  <!-- Core jar construction -->
+        <jar description="core jar binary file" compress="true"
+             jarfile="${dist.dir}/expressionJ.jar" >
+            <fileset defaultexcludes="yes" dir="${build.classes.dir}">
+                <include name="org/**/*.class"/>
+                <include name="org/**/resources/**/*.*"/>
+            </fileset>
+        </jar>
+    </target>
+
+
+    <!--
+
+    There exist several targets which are by default empty and which can be 
+    used for execution of your tasks. These targets are usually executed 
+    before and after some main targets. They are: 
+
+      -pre-init:                 called before initialization of project properties
+      -post-init:                called after initialization of project properties
+      -pre-compile:              called before javac compilation
+      -post-compile:             called after javac compilation
+      -pre-compile-single:       called before javac compilation of single file
+      -post-compile-single:      called after javac compilation of single file
+      -pre-compile-test:         called before javac compilation of JUnit tests
+      -post-compile-test:        called after javac compilation of JUnit tests
+      -pre-compile-test-single:  called before javac compilation of single JUnit test
+      -post-compile-test-single: called after javac compilation of single JUunit test
+      -pre-jar:                  called before JAR building
+      -post-jar:                 called after JAR building
+      -post-clean:               called after cleaning build products
+
+    (Targets beginning with '-' are not intended to be called on their own.)
+
+    Example of inserting an obfuscator after compilation could look like this:
+
+        <target name="-post-compile">
+            <obfuscate>
+                <fileset dir="${build.classes.dir}"/>
+            </obfuscate>
+        </target>
+
+    For list of available properties check the imported 
+    nbproject/build-impl.xml file. 
+
+
+    Another way to customize the build is by overriding existing main targets.
+    The targets of interest are: 
+
+      -init-macrodef-javac:     defines macro for javac compilation
+      -init-macrodef-junit:     defines macro for junit execution
+      -init-macrodef-debug:     defines macro for class debugging
+      -init-macrodef-java:      defines macro for class execution
+      -do-jar-with-manifest:    JAR building (if you are using a manifest)
+      -do-jar-without-manifest: JAR building (if you are not using a manifest)
+      run:                      execution of project 
+      -javadoc-build:           Javadoc generation
+      test-report:              JUnit report generation
+
+    An example of overriding the target for project execution could look like this:
+
+        <target name="run" depends="ExpressionJ-impl.jar">
+            <exec dir="bin" executable="launcher.exe">
+                <arg file="${dist.jar}"/>
+            </exec>
+        </target>
+
+    Notice that the overridden target depends on the jar target and not only on 
+    the compile target as the regular run target does. Again, for a list of available 
+    properties which you can use, check the target you are overriding in the
+    nbproject/build-impl.xml file. 
+
+    -->
+</project>
